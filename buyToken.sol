@@ -1,26 +1,38 @@
 pragma solidity 0.5.1;
 
+
+contract ERC20Token {
+    string public name;
+    mapping(address => uint256)public balances;
+    
+    function mint()public{
+           balances[tx.origin]++;
+    }
+}
+
 contract BuyTokenContract{
     mapping(address=>uint256)public balances;
     address payable wallet;
+    address public token;
         
-    constructor(address payable _wallet)public{
+    constructor(address payable _wallet, address _token)public{
         wallet=_wallet;
+        token=_token;
         
     }
+
     
     function() external payable{
         buyToken();
     }
     
     function buyToken() public payable{
-        //buy a buToken and send ether to a wallet
-        //msg.sender is the account that is calling this function
+       
+        ERC20Token _token=ERC20Token(address(token));
+        _token.mint();
         
-        balances[msg.sender]+=1;
-        
-        //msg.value will provide the amount of ether sent
         wallet.transfer(msg.value);
+
     }
     
     
